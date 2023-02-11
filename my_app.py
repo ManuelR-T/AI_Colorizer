@@ -1,6 +1,7 @@
 import torch
 import torchvision
 import torchvision.transforms as transforms
+import gradio as gr
 
 from NeuralNetwork import model
 
@@ -45,4 +46,37 @@ class ai_colorizer():
     def model_load(self, model_path):
         self.model.load_state_dict(torch.load(model_path))
 
+    def gradio_app(self):
+        gr.Interface(
+            fn=self.model.predict,
+            inputs=gr.inputs.Image(shape=(32, 32)),
+            outputs=gr.outputs.Image(shape=(32, 32))
+        ).launch()
 
+def train(ai_app):
+    ai_app.model_load("./models/model.ia")
+    response = input("Do you want to continue? (yes/no) ")
+    if response.lower() == "yes" or response.lower() == "y":
+        print("Saving model...")
+        ai_app.model_save("./models/model.ia")
+        print("Model saved!")
+
+def gradio_app(ai_app):
+    ai_app.model_load("./models/model.ia")
+    ai_app.gradio_app()
+
+def main():
+    ai_app = ai_colorizer()
+    while True:
+        response = input("Enter 'train' to train the model or 'gradio' to launch the app: ")
+        if response.lower() == "train" or response.lower() == "t":
+            train(ai_app)
+        elif response.lower() == "gradio" or response.lower() == "g":
+            gradio_app(ai_app)
+        else:
+            print("Invalid input!")
+            continue
+        break
+
+if __name__ == "__main__":
+    main()
