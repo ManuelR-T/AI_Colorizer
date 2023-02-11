@@ -1,2 +1,11 @@
+# global
 __pycache__
 /datasets/*
+.vscode
+
+# libs
+gr
+plt
+torch
+transforms
+torchvision

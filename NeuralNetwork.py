@@ -42,17 +42,32 @@ class model(nn.Module):
             total += 1
         return correct / total * 100
 
-    def train(self, x, y):
+    def train(self, train_loader_g, train_loader_c):
         for epoch in range(self.epochs):
-            for i, data in enumerate(x):
-                inputs, y_tests = data
+            for data_g, data_c in zip(train_loader_g, train_loader_c):
+                inputs_g, labels_g = data_g
+                inputs_c, labels_c = data_c
+
                 self.optimizer.zero_grad()
-                y_pred = self.forward(inputs)
-                loss = self.loss(y_pred, y_tests)
-                loss.backward()
+                # output grayscale
+                outputs_g   =   self.forward(inputs_g)
+                loss_g      =   self.loss(outputs_g, labels_g)
+
+                # output color
+                outputs_c   =   self.forward(inputs_c)
+                loss_c      =   self.loss(outputs_c, labels_c)
+
+                # total loss
+                loss_tot = loss_g + loss_c
+
+                loss_tot.backward()
                 self.optimizer.step()
-                if i % 100 == 0:
-                    loss = loss.item()
-                    accuracy = self.accuracy(y_tests, y_pred)
-                    print(f"Epoch: {epoch + 1} - Loss: {loss}")
-                    print(f"Epoch: {epoch + 1} - Accuracy: {accuracy}%")
+
+            # accuracy and loss asserting
+            loss = loss.item()
+            accuracy_g = self.accuracy(outputs_g, labels_g)
+            accuracy_c = self.accuracy(outputs_c, labels_c)
+            print(f"Epoch: {epoch + 1} - Loss: {loss}")
+            print(f"Epoch: {epoch + 1} - Accuracy: {accuracy_g}%")
+            print(f"Epoch: {epoch + 1} - Accuracy: {accuracy_c}%")
+

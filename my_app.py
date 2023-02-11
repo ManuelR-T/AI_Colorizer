@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+
+import os
 import torch
 import torchvision
 import torchvision.transforms as transforms
@@ -12,8 +15,10 @@ from NeuralNetwork import model
 EPOCHS      =   10
 BATCH_SIZE  =   64
 LR          =   0.001
-NB_OUTPUTS  =   10
 PATH_DS     =   './datasets'
+PATH_MOD    =   './models/model.ia'
+NB_INPUTS   =   32 * 32
+NB_OUTPUTS  =   NB_INPUTS * 3
 
 class AIColorizer():
     def __init__(self):
@@ -75,19 +80,22 @@ class AIColorizer():
 
 
 def train(ai_app):
-    ai_app.model_load("./models/model.ia")
+    if os.path.exists(path=PATH_MOD):
+        ai_app.model_load(PATH_MOD)
+
     response = input("Do you want to continue? (yes/no) ")
     if response.lower() == "yes" or response.lower() == "y":
         print("Saving model...")
-        ai_app.model_save("./models/model.ia")
+        ai_app.model_save(PATH_MOD)
         print("Model saved!")
 
 def gradio_app(ai_app):
-    ai_app.model_load("./models/model.ia")
+    ai_app.model_load(PATH_MOD)
     ai_app.gradio_app()
 
 def main():
     ai_app = AIColorizer()
+
     while True:
         response = input("Enter 'train' to train the model or 'gradio' to launch the app: ")
         if response.lower() == "train" or response.lower() == "t":
