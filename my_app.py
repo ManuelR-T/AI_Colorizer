@@ -1,25 +1,29 @@
 import torch
 import torchvision
 import torchvision.transforms as transforms
+import matplotlib.pyplot as plt
+
+from torch.utils.data import DataLoader
+from torchvision.datasets import CIFAR100
 import gradio as gr
 
 from NeuralNetwork import model
 
-EPOCHS = 10
-BATCH_SIZE = 64
-LR = 0.001
-NB_OUTPUTS = 10
-PATH = './datasets'
+EPOCHS      =   10
+BATCH_SIZE  =   64
+LR          =   0.001
+NB_OUTPUTS  =   10
+PATH_DS     =   './datasets'
 
 class AIColorizer():
     def __init__(self):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.model = model(epochs=EPOCHS, batch_size=BATCH_SIZE, l_r=LR, nb_outputs=NB_OUTPUTS)
         self.model.to(self.device)
-        self.train_loader_g =   self.get_data("./datasets/") # Train grayscale
-        self.test_loader_g  =   self.get_data("./datasets/", train=False) # Test grayscale
-        self.train_loader_c =   self.get_data("./datasets/", grayscale=False) # Train colored
-        self.test_loader_c  =   self.get_data("./datasets/", grayscale=False, train=False) # Test colored
+        self.train_loader_g =   self.get_data(PATH_DS) # Train grayscale
+        self.test_loader_g  =   self.get_data(PATH_DS, train=False) # Test grayscale
+        self.train_loader_c =   self.get_data(PATH_DS, grayscale=False) # Train colored
+        self.test_loader_c  =   self.get_data(PATH_DS, grayscale=False, train=False) # Test colored
 
     def get_data(
             self,
@@ -43,12 +47,12 @@ class AIColorizer():
                     ]
                 )
         dataset = torchvision.datasets.CIFAR100(
-            root = path,
-            train = train,
-            download = True,
-            transform = transform
+            root=path,
+            train=train,
+            download=True,
+            transform=transform
             )
-        dataloader = torch.utils.data.DataLoader(
+        dataloader = DataLoader(
             dataset,
             batch_size = BATCH_SIZE,
             shuffle = True,
@@ -68,6 +72,7 @@ class AIColorizer():
             inputs=gr.inputs.Image(shape=(32, 32)),
             outputs=gr.outputs.Image(shape=(32, 32))
         ).launch()
+
 
 def train(ai_app):
     ai_app.model_load("./models/model.ia")
@@ -93,6 +98,32 @@ def main():
             print("Invalid input!")
             continue
         break
+
+
+def test():
+    transform = transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.Normalize((0.5,), (0.5,))
+            ]
+        )
+
+    train_set = CIFAR100(
+        root=PATH_DS,
+        train=True,
+        download=True,
+        transform=transform
+        )
+
+    images, labels = zip(*[train_set[i] for i in range(6)])
+    fig, axes = plt.subplots(5, 5, figsize=(15, 15))
+    axes = axes.ravel()
+
+    for i, ax in enumerate(axes):
+        ax.imshow(images[i].permute(1, 2, 0))
+        ax.set_title(labels[i])
+        ax.axis("off")
+        print(fig)
 
 if __name__ == "__main__":
     main()
