@@ -43,16 +43,16 @@ class AIColorizer():
                     ]
                 )
         dataset = torchvision.datasets.CIFAR100(
-            root=path,
-            train=train,
-            download=True,
-            transform=transform
+            root = path,
+            train = train,
+            download = True,
+            transform = transform
             )
         dataloader = torch.utils.data.DataLoader(
             dataset,
-            batch_size=BATCH_SIZE,
-            shuffle=True,
-            num_workers=2
+            batch_size = BATCH_SIZE,
+            shuffle = True,
+            num_workers = 2
             )
         return dataloader
 
@@ -82,7 +82,7 @@ def gradio_app(ai_app):
     ai_app.gradio_app()
 
 def main():
-    ai_app = ai_colorizer()
+    ai_app = AIColorizer()
     while True:
         response = input("Enter 'train' to train the model or 'gradio' to launch the app: ")
         if response.lower() == "train" or response.lower() == "t":
