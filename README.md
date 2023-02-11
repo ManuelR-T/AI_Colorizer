@@ -10,15 +10,17 @@
 <h4 align="center">An application that brings images back to life with <a href="https://en.wikipedia.org/wiki/Convolutional_neural_network" target="_blank">CNN</a>.</h4>
 
 <p align="center">
-  <a href="#key-features">Key Features</a> •
-  <a href="#how-to-use">How To Use</a> •
-  <a href="#download">Download</a> •
-  <a href="#credits">Credits</a> •
-  <a href="#related">Related</a> •
-  <a href="#license">License</a>
+  <a href="#key-features-key">Key Features</a> •
+  <a href="#how-to-use-book">How To Use</a> •
+  <a href="#download-arrow_down">Download</a> •
+  <a href="#resources-books">Resources</a> •
+  <a href="#technologies-computer">Technologies</a> •
+  <a href="#support-heart">Support</a>
 </p>
 
-![screenshot](./.github/demo.gif)
+<p align="center">
+  <img src="./.github/demo.gif" />
+</p>
 
 ## Key Features :key:
 
